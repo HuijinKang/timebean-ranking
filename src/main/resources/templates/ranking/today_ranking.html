@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>timebean</title>
+    <link rel="stylesheet" href="/css/today_ranking.css" th:href="@{/css/today_ranking.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300..700&display=swap" rel="stylesheet">
+
+    <script>
+        // 페이지가 로드될 때 보여줄 할 일 목록을 DB에서 불러와 표시하는 함수
+        window.onload = function() {
+            fetchTodoList();
+        };
+
+        // 서버에서 JSON 데이터를 받아와 처리
+        function fetchTodoList() {
+            fetch('/ranking/todos')
+                .then(response => response.json())
+                .then(data => {
+                    const todoList = data[1];  // data[1]이 실제 Todo 리스트 배열임
+                    renderTodoList(todoList);
+                })
+                .catch(handleError);
+        }
+
+        // Todo 리스트를 화면에 출력
+        function renderTodoList(todoList) {
+            const todoListDiv = document.getElementById("todoList");
+            todoListDiv.innerHTML = "";  // 기존 목록 초기화
+
+            // 필터링된 Todo 리스트만 화면에 추가
+            const filteredTodos = todoList.filter(todoData => todoData && todoData.status);
+            const todoItems = filteredTodos.map(todoData => createTodoItem(todoData));
+
+            // 생성된 todo 항목들을 한번에 추가
+            todoListDiv.append(...todoItems);
+        }
+
+        // Todo 아이템 HTML 요소 생성
+        function createTodoItem(todo) {
+            const todoItem = document.createElement("div");
+            todoItem.className = "todo-item";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = todo.id;
+            checkbox.checked = todo.completed;
+            checkbox.onchange = () => updateTodoStatus(todo.id, checkbox.checked);
+
+            const todoText = document.createTextNode(` ${todo.text} `);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "x";
+            deleteButton.onclick = () => deleteTodo(todo.id);
+
+            todoItem.append(checkbox, todoText, deleteButton);
+            return todoItem;
+        }
+
+        // 에러 처리 함수
+        function handleError(error) {
+            console.error('Error fetching todo list:', error);
+        }
+
+        // Enter 키가 눌렸는지 확인하는 함수
+        function checkEnter(event) {
+            if (event.key === 'Enter') {  // Enter 키가 눌렸다면
+                addTodo();  // 할 일 추가 함수 호출
+            }
+        }
+
+        // 할 일 추가 함수
+        function addTodo() {
+            var todoInput = document.getElementById("todoInput");
+            var todoText = todoInput.value.trim();
+
+            if (todoText !== "") {
+                fetch('/ranking/addTodo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        text: todoText
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to add todo');
+                    }
+                    return response.text();  // 서버에서 문자열로 응답을 받을 경우
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    fetchTodoList();
+                })
+                .catch(error => {
+                    console.error('Error adding todo:', error);
+                });
+
+                // 입력 창 비우기
+                todoInput.value = "";
+            }
+        }
+
+        // 할 일 상태 업데이트 함수
+        function updateTodoStatus(todoId, isChecked) {
+            fetch('/ranking/todos/update/' + todoId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    completed: isChecked
+                })
+            })
+                .then(response => {
+                    // 할 일 목록 다시 불러오기
+                    fetchTodoList();
+                })
+                .catch(error => {
+                    console.error('Error updating todo status:', error);
+                });
+        }
+
+        // 할 일 삭제 함수
+        function deleteTodo(todoId) {
+            fetch('/ranking/todos/delete/' + todoId, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    // 할 일 목록 다시 불러오기
+                    fetchTodoList();
+                })
+                .catch(error => {
+                    console.error('Error deleting todo:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div layout:fragment="content" class="content">
+        <div class="layout-container">
+            <div class="left-side">
+                <!-- 프로필 카드 -->
+                <div class="profile-card">
+                    <div class="memberIsNotNull" th:if="${member != null}">
+                        <!-- 프로필 사진 -->
+                        <div class="profile-image">
+                            <img class="profile-url" th:src="${member.getProfileUrl() != null ? member.getProfileUrl() : '../images/profile_image.png'}" alt="Image"/>
+                        </div>
+                        <!-- 프로필 상세 정보 -->
+                        <div class="profile-details">
+                            <div>
+                                <strong>닉네임:&nbsp;</strong> <span th:text="${member.nickname}"></span>
+                            </div>
+                            <div>
+                                <strong>모은 콩:&nbsp;</strong> <span th:text="${myRankInfo.totalTime}"></span>
+                                <img class="bean-logo" th:src="@{/images/bean_logo.png}" alt="bean logo">
+                            </div>
+                            <div>
+                                <strong>나의 랭크:&nbsp;</strong>  <span th:text="${rank}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="memberIsNull" th:if="${member == null}">
+                        <div class="profile-image"></div>
+                        <small>로그인 후 사용이 가능해요.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="center-content">
+                <h2 style="margin-top: 30px;">Beans Top10</h2>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>닉네임</th>
+                            <th>모은 콩</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 랭킹 목록을 순회하며 출력 -->
+                        <tr th:each="ranking, status : ${memberRankList}">
+                            <td th:text="${ranking.rank}"></td>
+                            <td th:text="${ranking.nickname}"></td>
+                            <td th:text="${ranking.totalTime + '&nbsp;콩'}"></td>
+                        </tr>
+<!--                        <tr th:each="rank, status : ${memberRankingList}">-->
+<!--                            <td th:text="${status.index + 1}"></td>-->
+<!--                            <td th:text="${rank.member.nickname}"></td>-->
+<!--                            <td th:text="${rank.totalTime}"></td>-->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="right-side">
+                <!-- 노란색 div에 todoList 추가 -->
+                <div class="todo-list">
+                    <h2>Todo List</h2>
+                    <!-- 할 일을 입력하는 텍스트 박스 -->
+                    <div th:if="${member != null}">
+                        <input type="text" id="todoInput" placeholder="할 일을 입력하세요" onkeyup="checkEnter(event)">
+                        <!-- 작성 버튼 -->
+                        <button onclick="addTodo()">작성</button>
+                        <!-- 선 -->
+                        <div class="divider"></div>
+                        <!-- 할 일 목록 -->
+                        <div id="todoList">
+                            <!-- 여기에 동적으로 할 일 목록이 추가될 예정 -->
+                        </div>
+                    </div>
+                    <div th:if="${member == null}">
+                        <small>로그인 후 사용이 가능해요.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

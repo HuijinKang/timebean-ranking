@@ -1,0 +1,193 @@
+/* 수평 가운데 정렬 */
+.layout-container {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    min-height: 1200px;
+    position: relative;
+    background-color: #eeefcf;
+    border-radius: 10px;
+    font-family: "Signika", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      font-variation-settings:
+        "GRAD" 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.left-side {
+    float: left;
+    width: 20vw; /* 원하는 너비로 설정 */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.center-content {
+    width: 50vw;
+    text-align: center;
+    /*border-radius: 10px 10px 0 0;*/ /* 위쪽만 둥글게 */
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1), 2px 0 5px rgba(0, 0, 0, 0.1); /* 양 옆에만 그림자 */
+    box-sizing: border-box;
+}
+.right-side {
+    float: right;
+    width: 20vw; /* 원하는 너비로 설정 */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/*테이블*/
+/* 테이블 폭 조정 */
+/*table {
+    width: 80%;
+    border-collapse: collapse;
+    text-align: center;
+    margin: 0 auto;
+}
+th, td {
+    padding: 8px;
+    border: 1px solid black;
+}*/
+/* 테이블 스타일 */
+table {
+    border-spacing: 0; /* 셀 간의 간격을 없앰 */
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 800px;
+    width: 80%;
+    margin: 0 auto;
+    position: relative;
+    /*border: 1px solid #E3F1D5;*/
+}
+
+thead tr {
+    height: 60px;
+    background: #b9df88;
+    font-size: 16px;
+    border-bottom: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 아래쪽 그림자 추가 */
+}
+
+tbody tr {
+    height: 48px;
+    border-bottom: 1px solid #E3F1D5; /* 가로 구분선만 남김 */
+}
+
+td, th {
+    border-left: none; /* 세로 구분선 제거 */
+    border-right: none; /* 세로 구분선 제거 */
+}
+
+/* 마우스 오버시 효과 */
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    table {
+        width: 90%; /* 모바일에서 더 좁게 표시 */
+    }
+}
+
+
+/*todoList*/
+.todo-list {
+    position: fixed;
+    top: 100px;
+    background-color: white;
+    padding: 1vw;
+    margin-top: 20px;
+    width: 15vw;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* 할 일 목록 스타일 */
+.todo-item {
+    margin-bottom: 10px;
+}
+/* 선 스타일 */
+.divider {
+    border-top: 1px solid black;
+    margin-top: 20px;
+}
+
+/*프로필 카드*/
+/* 프로필 카드 스타일 */
+.profile-card{
+    position: relative;
+    width: 10vw;
+    background-color: white;
+    padding: 3vw;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.memberIsNotNull, .memberIsNull {
+    display: flex;
+    flex-direction: column; /* 세로로 배치 */
+    align-items: center;
+}
+.profile-image {
+    background-size: cover; /* 이미지를 컨테이너에 꽉 차게 */
+    width: 100%; /* 컨테이너에 맞게 너비 조정 */
+    max-width: 110px; /* 최대 너비를 설정하여 너무 커지지 않게 함 */
+    height: 100%; /* 높이를 자동으로 맞춤 */
+    max-height: 110px;
+    aspect-ratio: 1 / 1; /* 가로세로 비율을 1:1로 유지하여 원형 유지 */
+    border-radius: 50%; /* 원형 이미지 유지 */
+    object-fit: cover;
+    margin-bottom: 20px;
+    background-color: #ccc; /* 프로필 사진이 없는 경우를 대비한 배경색 */
+}
+.profile-url {
+    background-size: cover; /* 이미지를 컨테이너에 꽉 차게 */
+    width: 100%; /* 컨테이너에 맞게 너비 조정 */
+    max-width: 110px; /* 최대 너비를 설정하여 너무 커지지 않게 함 */
+    height: 100%; /* 높이를 자동으로 맞춤 */
+    max-height: 110px;
+    aspect-ratio: 1 / 1; /* 가로세로 비율을 1:1로 유지하여 원형 유지 */
+    border-radius: 50%; /* 원형 이미지 유지 */
+    object-fit: cover;
+    margin-bottom: 20px; /* 프로필 사진이 없는 경우를 대비한 배경색 */
+
+}
+.profile-details {
+    flex: 1;
+}
+img.bean-logo {
+    width: 12px;
+    height: 12px;
+}
+
+/* 작은 화면에 대한 반응형 스타일 */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .profile-url .profile-image {
+        width: 40px; /* 버튼 너비를 작게 */
+        height: 40px; /* 정사각형으로 */
+    }
+
+    .profile-details {
+        font-size: 12px; /* Smaller font for small screens */
+    }
+}

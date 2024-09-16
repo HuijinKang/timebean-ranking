@@ -1,0 +1,24 @@
+div#footer {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 수평 중앙 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+    text-align: center;
+    height: 80px;
+    background-color: white;
+}
+div#left-footer{
+    flex-basis: 25%;
+    width: 25%;
+}
+div#center-footer{
+    flex-basis: 50%;
+    width: 50%;
+    max-height: 100%;
+    text-align: center;
+}
+div#right-footer{
+    flex-basis: 25%;
+    width: 25%;
+}
